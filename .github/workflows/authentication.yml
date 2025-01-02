@@ -32,7 +32,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
-    steps:
+  steps:
     - name: Checkout Code
       uses: actions/checkout@v4
 
@@ -40,21 +40,26 @@ jobs:
     - name: Authenticate with Azure
       uses: azure/login@v1
       with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
     - name: Show Subscription
       run: |
         az account show
 
     - name: Configure AWS Credentials
+      id: assume_oidc_role
       uses: aws-actions/configure-aws-credentials@v4
       with:
         aws-region: ${{ inputs.AWS_REGION }}
         role-to-assume: ${{ secrets.AWS_GITHUB_OIDC_ROLE_ARN }}
+        role-duration-seconds: 3600
+        role-skip-session-tagging: true
+        output-credentials: true
 
     - name: Assume execution role
+      id: assume_execution_role
       uses: aws-actions/configure-aws-credentials@v4
       with:
         aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
@@ -69,3 +74,7 @@ jobs:
     - name: Test role access
       run: aws sts get-caller-identity
 
+  outputs:
+    AWS_ACCESS_KEY_ID: ${{ steps.assume_execution_role.outputs.aws-access-key-id }}
+    AWS_SECRET_ACCESS_KEY: ${{ steps.assume_execution_role.outputs.aws-secret-access-key }}
+    AWS_SESSION_TOKEN: ${{ steps.assume_execution_role.outputs.aws-session-token }}
