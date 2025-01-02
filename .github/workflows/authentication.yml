@@ -23,6 +23,10 @@ on:
         description: AWS Execution role to perform actions in the account
         required: true
         type: string
+      AWS_REGION:
+        description: AWS Region - even though a global service - still needs defining
+        required: true
+        type: string
 
 permissions:
   id-token: write
