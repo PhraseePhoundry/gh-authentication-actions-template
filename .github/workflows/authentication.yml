@@ -32,6 +32,12 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
+    outputs:
+      AWS_ACCESS_KEY_ID: ${{ steps.assume_execution_role.outputs.aws-access-key-id }}
+      AWS_SECRET_ACCESS_KEY: ${{ steps.assume_execution_role.outputs.aws-secret-access-key }}
+      AWS_SESSION_TOKEN: ${{ steps.assume_execution_role.outputs.aws-session-token }}
+      AWS_REGION: ${{ inputs.AWS_REGION }}
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -59,6 +65,7 @@ jobs:
           role-skip-session-tagging: true
           output-credentials: true
 
+
       # Assume AWS Execution Role
       - name: Assume Execution Role
         id: assume_execution_role
@@ -80,18 +87,29 @@ jobs:
       - name: Export Credentials
         id: export-credentials
         run: |
-          echo "::set-output name=AWS_ACCESS_KEY_ID::${AWS_ACCESS_KEY_ID}"
-          echo "::set-output name=AWS_SECRET_ACCESS_KEY::${AWS_SECRET_ACCESS_KEY}"
-          echo "::set-output name=AWS_SESSION_TOKEN::${AWS_SESSION_TOKEN}"
-          echo "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}" >> "$GITHUB_ENV"
-          echo "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}" >> "$GITHUB_ENV"
-          echo "AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}" >> "$GITHUB_ENV"
+          echo "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}" >> $GITHUB_ENV
+          echo "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}" >> $GITHUB_ENV
+          echo "AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}" >> $GITHUB_ENV
+          echo "AWS_REGION=${AWS_REGION}" >> $GITHUB_ENV
+        env:
+          AWS_ACCESS_KEY_ID: ${{ env.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          AWS_SESSION_TOKEN: ${{ env.AWS_SESSION_TOKEN }}
+          AWS_REGION: ${{ env.AWS_REGION }}
 
+      - name: Set Outputs
+        run: |
+          echo "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}" >> $GITHUB_OUTPUT
+          echo "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}" >> $GITHUB_OUTPUT
+          echo "AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}" >> $GITHUB_OUTPUT
+          echo "AWS_REGION=${{ inputs.AWS_REGION }}" >> $GITHUB_OUTPUT
+        env:
+          AWS_ACCESS_KEY_ID: ${{ env.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          AWS_SESSION_TOKEN: ${{ env.AWS_SESSION_TOKEN }}
+          AWS_REGION: ${{ env.AWS_REGION }}
 
-    outputs:
-      AWS_ACCESS_KEY_ID: ${{ steps.assume_execution_role.outputs.aws-access-key-id }}
-      AWS_SECRET_ACCESS_KEY: ${{ steps.assume_execution_role.outputs.aws-secret-access-key }}
-      AWS_SESSION_TOKEN: ${{ steps.assume_execution_role.outputs.aws-session-token }}
-      AWS_REGION: ${{ inputs.AWS_REGION }}
-
-
+      - name: see env
+        run: cat $GITHUB_ENV
+      - name: see output
+        run: echo $GITHUB_OUTPUT
