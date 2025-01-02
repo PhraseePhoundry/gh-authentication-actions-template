@@ -65,14 +65,15 @@ jobs:
           role-skip-session-tagging: true
           output-credentials: true
 
+      - name: Check pre Creds
+          echo "${{ env.AWS_ACCESS_KEY_ID }} >> /tmp/x"
+          cat /tmp/x
 
       # Assume AWS Execution Role
       - name: Assume Execution Role
         id: assume_execution_role
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          echo "${{ env.AWS_ACCESS_KEY_ID }} > /tmp/x"
-          cat /tmp/x
           aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
           aws-session-token: ${{ env.AWS_SESSION_TOKEN }}
@@ -82,9 +83,10 @@ jobs:
           role-skip-session-tagging: true
           output-credentials: true
 
-      - name: Check Creds
+      - name: Check post Creds
           echo "${{ env.AWS_ACCESS_KEY_ID }} >> /tmp/x"
           cat /tmp/x
+
       # Test AWS Role Access
       - name: Test Role Access
         run: aws sts get-caller-identity
