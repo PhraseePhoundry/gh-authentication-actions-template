@@ -67,7 +67,7 @@ jobs:
 
       - name: Check pre Creds
         run: |
-         echo "${{ env.AWS_ACCESS_KEY_ID }} >> /tmp/x"
+         echo "${{ env.AWS_ACCESS_KEY_ID }} > /tmp/x"
          cat /tmp/x
 
       # Assume AWS Execution Role
