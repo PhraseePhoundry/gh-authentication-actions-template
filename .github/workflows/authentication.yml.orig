@@ -77,17 +77,8 @@ jobs:
       - name: Test Role Access
         run: aws sts get-caller-identity
 
-      - name: Export Credentials
-        id: export-credentials
-        run: |
-          echo "::set-output name=AWS_ACCESS_KEY_ID::${AWS_ACCESS_KEY_ID}"
-          echo "::set-output name=AWS_SECRET_ACCESS_KEY::${AWS_SECRET_ACCESS_KEY}"
-          echo "::set-output name=AWS_SESSION_TOKEN::${AWS_SESSION_TOKEN}"
-
     outputs:
       AWS_ACCESS_KEY_ID: ${{ steps.assume_execution_role.outputs.aws-access-key-id }}
       AWS_SECRET_ACCESS_KEY: ${{ steps.assume_execution_role.outputs.aws-secret-access-key }}
       AWS_SESSION_TOKEN: ${{ steps.assume_execution_role.outputs.aws-session-token }}
-      AWS_REGION: ${{ inputs.AWS_REGION }}
-
 
