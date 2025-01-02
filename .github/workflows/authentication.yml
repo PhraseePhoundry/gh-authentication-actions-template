@@ -55,7 +55,7 @@ jobs:
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v4
       with:
-        aws-region: eu-west-1
+        aws-region: ${{ inputs.AWS_REGION }}
         role-to-assume: ${{ inputs.AWS_GITHUB_OIDC_ROLE_ARN }}
 
     - name: Assume execution role
@@ -65,7 +65,7 @@ jobs:
         aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
         aws-session-token: ${{ env.AWS_SESSION_TOKEN }}
         role-to-assume: ${{ inputs.AWS_GITHUB_OIDC_EXECUTION_ROLE_ARN }}
-        aws-region: eu-west-1
+        aws-region: ${{ inputs.AWS_REGION }}
         role-duration-seconds: 3000
         role-skip-session-tagging: true
         output-credentials: true
