@@ -1,4 +1,7 @@
-name: authentication_provider
+name: Authentication Workflow
+
+on:
+  workflow_call:
 
 permissions:
   id-token: write
