@@ -83,6 +83,10 @@ jobs:
           echo "::set-output name=AWS_ACCESS_KEY_ID::${AWS_ACCESS_KEY_ID}"
           echo "::set-output name=AWS_SECRET_ACCESS_KEY::${AWS_SECRET_ACCESS_KEY}"
           echo "::set-output name=AWS_SESSION_TOKEN::${AWS_SESSION_TOKEN}"
+          echo "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}" >> "$GITHUB_ENV"
+          echo "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}" >> "$GITHUB_ENV"
+          echo "AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}" >> "$GITHUB_ENV"
+
 
     outputs:
       AWS_ACCESS_KEY_ID: ${{ steps.assume_execution_role.outputs.aws-access-key-id }}
