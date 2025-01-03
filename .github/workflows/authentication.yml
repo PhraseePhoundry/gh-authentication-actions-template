@@ -23,6 +23,10 @@ on:
         description: AWS Region - even though a global service - still needs defining
         required: true
         type: string
+    outputs:
+      firstword:
+        description: "The first output string"
+        value: "hello there!"
 
 permissions:
   id-token: write
