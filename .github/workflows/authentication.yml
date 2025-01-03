@@ -29,7 +29,7 @@ on:
       AWS_SECRET_ACCESS_KEY: 
         value: ${{ jobs.deploy.outputs.AWS_SECRET_ACCESS_KEY }}
       AWS_SESSION_TOKEN: 
-        value: ${{ jobs.deploy.outputs.AWS_SECRET_ACCESS_KEY }}
+        value: ${{ jobs.deploy.outputs.AWS_SESSION_TOKEN }}
       AWS_REGION: 
         value: ${{ inputs.AWS_REGION }}
 
@@ -88,5 +88,12 @@ jobs:
           output-credentials: true
 
       # Test AWS Role Access
-      - name: Test Role Access
-        run: aws sts get-caller-identity
+      #- name: Test Role Access
+        #run: aws sts get-caller-identity
+
+
+      - name: Test Access
+        run: |
+          echo "AWS_ACCESS_KEY_ID: ${{ steps.assume_execution_role.outputs.aws-access-key-id }}"
+          echo "AWS_SECRET_ACCESS_KEY: ${{ steps.assume_execution_role.outputs.aws-secret-access-key }}"
+          echo "AWS_SESSION_TOKEN: ${{ steps.assume_execution_role.outputs.aws-session-token }}"
