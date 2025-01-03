@@ -88,8 +88,10 @@ jobs:
 
       - name: Test AWS Identity
         env:
-          AWS_ACCESS_KEY_ID: ${{ needs.authentication.outputs.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ needs.authentication.outputs.AWS_SECRET_ACCESS_KEY }}
-          AWS_SESSION_TOKEN: ${{ needs.authentication.outputs.AWS_SESSION_TOKEN }}
-          AWS_REGION: ${{ needs.authentication.outputs.AWS_REGION }}
+          AWS_ACCESS_KEY_ID: ${{ steps.assume_execution_role.outputs.aws-access-key-id }}
+          AWS_SECRET_ACCESS_KEY: ${{ steps.assume_execution_role.outputs.aws-secret-access-key }}
+          AWS_SESSION_TOKEN: ${{ steps.assume_execution_role.outputs.aws-session-token }}
+          AWS_REGION: ${{ inputs.AWS_REGION }}
         run: aws sts get-caller-identity 
+
+
