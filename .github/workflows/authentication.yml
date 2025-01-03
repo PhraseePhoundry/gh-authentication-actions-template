@@ -25,11 +25,11 @@ on:
         type: string
     outputs:
       AWS_ACCESS_KEY_ID: 
-        value: ${{ env.AWS_ACCESS_KEY_ID }}
+        value: ${{ steps.assume_execution_role.outputs.aws-access-key-id }}
       AWS_SECRET_ACCESS_KEY: 
-        value: ${{ env.AWS_SECRET_ACCESS_KEY }}
+        value: ${{ steps.assume_execution_role.outputs.aws-secret-access-key }}
       AWS_SESSION_TOKEN: 
-        value: ${{ env.AWS_SESSION_TOKEN }}
+        value: ${{ steps.assume_execution_role.outputs.aws-session-token }}
       AWS_REGION: 
         value: ${{ inputs.AWS_REGION }}
 
