@@ -39,4 +39,6 @@ jobs:
       - name: Show Subscription
         run: |
           pwd
+          df -h .
+          date > testfile
           ls -l 
