@@ -27,9 +27,9 @@ on:
       AWS_ACCESS_KEY_ID: 
         value: ${{ jobs.deploy.outputs.AWS_ACCESS_KEY_ID}}
       AWS_SECRET_ACCESS_KEY: 
-        value: ${{ jobs.deploy.outputs..AWS_SECRET_ACCESS_KEY }}
+        value: ${{ jobs.deploy.outputs.AWS_SECRET_ACCESS_KEY }}
       AWS_SESSION_TOKEN: 
-        value: ${{ jobs.deploy.outputs..AWS_SECRET_ACCESS_KEY }}
+        value: ${{ jobs.deploy.outputs.AWS_SECRET_ACCESS_KEY }}
       AWS_REGION: 
         value: ${{ inputs.AWS_REGION }}
 
