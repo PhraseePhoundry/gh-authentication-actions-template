@@ -2,22 +2,6 @@ name: Authentication Workflow
 
 on:
   workflow_call:
-    secrets:
-      AZURE_CLIENT_ID:
-        description: Azure Client Id
-        required: true
-      AZURE_TENANT_ID:
-        description: Azure Tenant Id
-        required: true
-      AZURE_SUBSCRIPTION_ID:
-        description: Azure Subscription Id
-        required: true
-      AWS_GITHUB_OIDC_ROLE_ARN:
-        description: AWS OIDC Role to assume and use as a jump to the execution role
-        required: true
-      AWS_GITHUB_OIDC_EXECUTION_ROLE_ARN:
-        description: AWS Execution role to perform actions in the account
-        required: true
     inputs:
       AWS_REGION:
         description: AWS Region - even though a global service - still needs defining
@@ -25,11 +9,11 @@ on:
         type: string
     outputs:
       AWS_ACCESS_KEY_ID: 
-        value: ${{ jobs.deploy.outputs.AWS_ACCESS_KEY_ID }}
+        value: ${{ jobs.authenticate_aws.outputs.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: 
-        value: ${{ jobs.deploy.outputs.AWS_SECRET_ACCESS_KEY }}
+        value: ${{ jobs.authenticate_aws.outputs.AWS_SECRET_ACCESS_KEY }}
       AWS_SESSION_TOKEN: 
-        value: ${{ jobs.deploy.outputs.AWS_SESSION_TOKEN }}
+        value: ${{ jobs.authenticate_aws.outputs.AWS_SESSION_TOKEN }}
       AWS_REGION: 
         value: ${{ inputs.AWS_REGION }}
 
@@ -37,18 +21,13 @@ permissions:
   id-token: write
   contents: read
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
+#jobs:
+  #authenticate_az:
+    #runs-on: ubuntu-latest
 
-    outputs:
-      AWS_ACCESS_KEY_ID: ${{ steps.assume_execution_role.outputs.aws-access-key-id }}
-      AWS_SECRET_ACCESS_KEY: ${{ steps.assume_execution_role.outputs.aws-secret-access-key }}
-      AWS_SESSION_TOKEN: ${{ steps.assume_execution_role.outputs.aws-session-token }}
-
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+    #steps:
+      #- name: Checkout Code
+        #uses: actions/checkout@v4
 
       # Authenticate with Azure
       #- name: Authenticate with Azure
@@ -61,6 +40,22 @@ jobs:
       #- name: Show Subscription
       #  run: |
       #    az account show
+
+  authenticate_aws:
+    runs-on: ubuntu-latest
+
+    outputs:
+      #AWS_ACCESS_KEY_ID: ${{ steps.assume_execution_role.outputs.aws-access-key-id }}
+      #AWS_SECRET_ACCESS_KEY: ${{ steps.assume_execution_role.outputs.aws-secret-access-key }}
+      #AWS_SESSION_TOKEN: ${{ steps.assume_execution_role.outputs.aws-session-token }}
+
+      AWS_ACCESS_KEY_ID: ${{ steps.encode.outputs.ENCODED_AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ steps.encode.outputs.ENCODED_AWS_SECRET_ACCESS_KEY }}
+      AWS_SESSION_TOKEN: ${{ steps.encode.outputs.ENCODED_AWS_SESSION_TOKEN }}
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
       # Configure AWS Credentials for OIDC Role
       - name: Configure AWS Credentials
@@ -87,13 +82,20 @@ jobs:
           role-skip-session-tagging: true
           output-credentials: true
 
-      # Test AWS Role Access
-      #- name: Test Role Access
-        #run: aws sts get-caller-identity
-
-
       - name: Test Access
         run: |
           echo "AWS_ACCESS_KEY_ID: ${{ steps.assume_execution_role.outputs.aws-access-key-id }}" | base64
           echo "AWS_SECRET_ACCESS_KEY: ${{ steps.assume_execution_role.outputs.aws-secret-access-key }}" | base64
           echo "AWS_SESSION_TOKEN: ${{ steps.assume_execution_role.outputs.aws-session-token }}" | base64
+
+
+      - name: Encode Outputs to Base64
+        id: encode
+        run: |
+          echo "ENCODED_AWS_ACCESS_KEY_ID=$(echo -n $AWS_ACCESS_KEY_ID | base64)" >> $GITHUB_OUTPUT
+          echo "ENCODED_AWS_SECRET_ACCESS_KEY=$(echo -n $AWS_SECRET_ACCESS_KEY | base64)" >> $GITHUB_OUTPUT
+          echo "ENCODED_AWS_SESSION_TOKEN=$(echo -n $AWS_SESSION_TOKEN | base64)" >> $GITHUB_OUTPUT
+        env:
+          AWS_ACCESS_KEY_ID: ${{ env.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          AWS_SESSION_TOKEN: ${{ env.AWS_SESSION_TOKEN }}
