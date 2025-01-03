@@ -38,6 +38,5 @@ jobs:
 
       - name: Show Subscription
         run: |
-          df -h
-          mount
-          ls -l /tmp/
+          pwd
+          ls -l 
