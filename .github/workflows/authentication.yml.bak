@@ -67,8 +67,8 @@ jobs:
 
       - name: Check pre Creds
         run: |
-         echo "${{ env.AWS_ACCESS_KEY_ID }} > /tmp/x"
-         cat /tmp/x
+         echo "${{ env.AWS_ACCESS_KEY_ID }} > x"
+         cat x
 
       # Assume AWS Execution Role
       - name: Assume Execution Role
@@ -86,8 +86,8 @@ jobs:
 
       - name: Check post Creds
         run: |
-         echo "${{ env.AWS_ACCESS_KEY_ID }} >> /tmp/x"
-         cat /tmp/x
+         echo "${{ env.AWS_ACCESS_KEY_ID }} >> x"
+         cat x
 
       # Test AWS Role Access
       - name: Test Role Access
