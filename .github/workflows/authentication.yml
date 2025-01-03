@@ -24,13 +24,13 @@ on:
         required: true
         type: string
     outputs:
-      AWS_ACCESS_KEY_ID:
-        value: ${{ steps.assume_execution_role.outputs.aws-access-key-id }}
-      AWS_SECRET_ACCESS_KEY:
-        value: ${{ steps.assume_execution_role.outputs.aws-secret-access-key }}
-      AWS_SESSION_TOKEN:
-        value: ${{ steps.assume_execution_role.outputs.aws-session-token }}
-      AWS_REGION:
+      AWS_ACCESS_KEY_ID: 
+        value: ${{ jobs.deploy.outputs.AWS_ACCESS_KEY_ID}}
+      AWS_SECRET_ACCESS_KEY: 
+        value: ${{ jobs.deploy.outputs..AWS_SECRET_ACCESS_KEY }}
+      AWS_SESSION_TOKEN: 
+        value: ${{ jobs.deploy.outputs..AWS_SECRET_ACCESS_KEY }}
+      AWS_REGION: 
         value: ${{ inputs.AWS_REGION }}
 
 permissions:
@@ -41,9 +41,26 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
+    outputs:
+      AWS_ACCESS_KEY_ID: ${{ steps.assume_execution_role.outputs.aws-access-key-id }}
+      AWS_SECRET_ACCESS_KEY: ${{ steps.assume_execution_role.outputs.aws-secret-access-key }}
+      AWS_SESSION_TOKEN: ${{ steps.assume_execution_role.outputs.aws-session-token }}
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+
+      # Authenticate with Azure
+      #- name: Authenticate with Azure
+      #  uses: azure/login@v1
+      #  with:
+      #    client-id: ${{ secrets.AZURE_CLIENT_ID }}
+      #    tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+      #    subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      #- name: Show Subscription
+      #  run: |
+      #    az account show
 
       # Configure AWS Credentials for OIDC Role
       - name: Configure AWS Credentials
@@ -61,9 +78,9 @@ jobs:
         id: assume_execution_role
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ steps.assume_oidc_role.outputs.aws-access-key-id }}
-          aws-secret-access-key: ${{ steps.assume_oidc_role.outputs.aws-secret-access-key }}
-          aws-session-token: ${{ steps.assume_oidc_role.outputs.aws-session-token }}
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ env.AWS_SESSION_TOKEN }}
           role-to-assume: ${{ secrets.AWS_GITHUB_OIDC_EXECUTION_ROLE_ARN }}
           aws-region: ${{ inputs.AWS_REGION }}
           role-duration-seconds: 3000
@@ -73,12 +90,3 @@ jobs:
       # Test AWS Role Access
       - name: Test Role Access
         run: aws sts get-caller-identity
-
-      - name: Test AWS Identity
-        env:
-          AWS_ACCESS_KEY_ID: ${{ steps.assume_execution_role.outputs.aws-access-key-id }}
-          AWS_SECRET_ACCESS_KEY: ${{ steps.assume_execution_role.outputs.aws-secret-access-key }}
-          AWS_SESSION_TOKEN: ${{ steps.assume_execution_role.outputs.aws-session-token }}
-          AWS_REGION: ${{ inputs.AWS_REGION }}
-        run: aws sts get-caller-identity
-
