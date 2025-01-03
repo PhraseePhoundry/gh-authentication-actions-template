@@ -32,64 +32,12 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
-    outputs:
-      AWS_ACCESS_KEY_ID: ${{ steps.assume_execution_role.outputs.aws-access-key-id }}
-      AWS_SECRET_ACCESS_KEY: ${{ steps.assume_execution_role.outputs.aws-secret-access-key }}
-      AWS_SESSION_TOKEN: ${{ steps.assume_execution_role.outputs.aws-session-token }}
-      AWS_REGION: ${{ inputs.AWS_REGION }}
-
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # Authenticate with Azure
-      - name: Authenticate with Azure
-        uses: azure/login@v1
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
       - name: Show Subscription
         run: |
-          az account show
-
-      # Configure AWS Credentials for OIDC Role
-      - name: Configure AWS Credentials
-        id: assume_oidc_role
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-region: ${{ inputs.AWS_REGION }}
-          role-to-assume: ${{ secrets.AWS_GITHUB_OIDC_ROLE_ARN }}
-          role-duration-seconds: 3600
-          role-skip-session-tagging: true
-          output-credentials: true
-
-      - name: Check pre Creds
-        run: |
-         echo "${{ env.AWS_ACCESS_KEY_ID }} > /tmp/x"
-         cat /tmp/x
-
-      # Assume AWS Execution Role
-      - name: Assume Execution Role
-        id: assume_execution_role
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
-          aws-session-token: ${{ env.AWS_SESSION_TOKEN }}
-          role-to-assume: ${{ secrets.AWS_GITHUB_OIDC_EXECUTION_ROLE_ARN }}
-          aws-region: ${{ inputs.AWS_REGION }}
-          role-duration-seconds: 3000
-          role-skip-session-tagging: true
-          output-credentials: true
-
-      - name: Check post Creds
-        run: |
-         echo "${{ env.AWS_ACCESS_KEY_ID }} >> /tmp/x"
-         cat /tmp/x
-
-      # Test AWS Role Access
-      - name: Test Role Access
-        run: aws sts get-caller-identity
-
+          df -h
+          mount
+          ls -l /tmp/
