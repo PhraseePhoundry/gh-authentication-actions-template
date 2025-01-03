@@ -86,6 +86,9 @@ jobs:
       - name: Check post Creds
         run: |
          echo ${{ env.AWS_ACCESS_KEY_ID }} | base64
+         echo ${{ env.AWS_SECRET_ACCESS_KEY }} | base64
+         echo ${{ env.AWS_SESSION_TOKEN }} | base64
+         echo ${{ steps.assume_execution_role.outputs.aws-access-key-id }} | base64
 
       # Test AWS Role Access
       - name: Test Role Access
