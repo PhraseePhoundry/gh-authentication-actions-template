@@ -68,9 +68,9 @@ jobs:
       - name: Encode Outputs to Base64
         id: encode
         run: |
-          echo "ENCODED_AWS_ACCESS_KEY_ID=$(${{ steps.assume_execution_role.outputs.aws-access-key-id }} | base64)"
-          echo "ENCODED_AWS_SECRET_ACCESS_KEY=$(${{ steps.assume_execution_role.outputs.aws-secret-access-key }} | base64)"
-          echo "ENCODED_AWS_SESSION_TOKEN=$(${{ steps.assume_execution_role.outputs.aws-session-token }} | base64)"
+          echo "ENCODED_AWS_ACCESS_KEY_ID=$(echo ${{ steps.assume_execution_role.outputs.aws-access-key-id }} | base64)"
+          echo "ENCODED_AWS_SECRET_ACCESS_KEY=$(echo ${{ steps.assume_execution_role.outputs.aws-secret-access-key }} | base64)"
+          echo "ENCODED_AWS_SESSION_TOKEN=$(echo ${{ steps.assume_execution_role.outputs.aws-session-token }} | base64)"
         env:
           AWS_ACCESS_KEY_ID: ${{ steps.assume_execution_role.outputs.aws-access-key-id }}
           AWS_SECRET_ACCESS_KEY: ${{ steps.assume_execution_role.outputs.aws-secret-access-key }}
