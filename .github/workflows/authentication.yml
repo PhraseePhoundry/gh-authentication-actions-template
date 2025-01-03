@@ -24,9 +24,14 @@ on:
         required: true
         type: string
     outputs:
-      firstword:
-        description: "The first output string"
-        value: "hello there!"
+      AWS_ACCESS_KEY_ID: 
+        value: ${{ env.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: 
+        value: ${{ env.AWS_SECRET_ACCESS_KEY }}
+      AWS_SESSION_TOKEN: 
+        value: ${{ env.AWS_SESSION_TOKEN }}
+      AWS_REGION: 
+        value: ${{ inputs.AWS_REGION }}
 
 permissions:
   id-token: write
@@ -85,20 +90,3 @@ jobs:
       - name: Test Role Access
         run: aws sts get-caller-identity
 
-      - name: Set Outputs
-        run: |
-          echo "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}" >> $GITHUB_OUTPUT
-          echo "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}" >> $GITHUB_OUTPUT
-          echo "AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}" >> $GITHUB_OUTPUT
-          echo "AWS_REGION=${{ inputs.AWS_REGION }}" >> $GITHUB_OUTPUT
-        env:
-          AWS_ACCESS_KEY_ID: ${{ env.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ env.AWS_SECRET_ACCESS_KEY }}
-          AWS_SESSION_TOKEN: ${{ env.AWS_SESSION_TOKEN }}
-          AWS_REGION: ${{ env.AWS_REGION }}
-
-    outputs:
-      AWS_ACCESS_KEY_ID: ${{ env.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ env.AWS_SECRET_ACCESS_KEY }}
-      AWS_SESSION_TOKEN: ${{ env.AWS_SESSION_TOKEN }}
-      AWS_REGION: ${{ inputs.AWS_REGION }}
